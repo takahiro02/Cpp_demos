@@ -689,56 +689,6 @@ int main()
      
     HW_game hwgame;
     hwgame.run();
-
-    /*
-      Since its freedom is large (there is no specification of how many classes are to be used,
-      or which class has what kinds of members), I was being confused about the overall
-      class structure for the game.
-
-      I started with conceptualizing what component the game has, and I thought there are 
-      conceptually 2 components, 1 is the background, Cave class, and the other is 
-      the user interface, HW_game, which deals with user's input and actions. I'm sure any
-      way of conceptualization works, such as using only 1 class, but for designing a software,
-      I think it's the important 1st step, to conceptualize the functionalities of the game, or
-      software, and the software designer (I) confirm myself that the conceptualization
-      (dividing the software into meaningful components, and understanding how those components
-      interact with each other).
-      
-      Along with the conceptualization step, I looked up some websites (mainly wikipedia) to
-      check the detailed rules of the game. The problem descriotion of the book is not detailed
-      enough. For example, it doesn't tell if the Wumpus and a pit/bat can be in the same Room,
-      or what happens when an invalid room numbers are entered for shooting an arrow, or
-      more basically, whether it makes sense for an arrow to take turns in the middle of flying.
-      I checked how the detailed rules, including the examples above and many more, were going 
-      by looking up those information on the internet. For some detailed rules, I cannot find
-      any information, such as whether a bat keeps staying in the same Room after it carries 
-      the player to a random Room, and whether a bat can take the player to the Room where
-      the Wumpus / a pit exists. For those rules that even the internet cannot tell, I applied 
-      my own rules, so that they makes sense to me (for example, I made a rule that a bat can
-      take the player to the Room with the Wumpus or a pit, because that makes the game more
-      risky and thrilling).
-
-      Then, along with further conceptualization, I started writing the code. But since it's
-      almost impossible to foresee exactly what functionalities are needed for building the
-      software I have designed, I anyway kept writing the code. Among them, there are some
-      functionalities that turned out to be not necessary, for example, inside Cave class,
-          enum Danger_type { BAT, PIT, WUMPUS, NO};
-          Danger_type has_danger(int room_num){
-	  // tells the caller what kinds of dangers exist in the specified Room
-	  }
-      This is just 1 example. On the other hands, there are many functionalities that I first
-      thought not necessary, but were actually necessary, and I added to the game. For example,
-      Command class that is used to read the player's command, and some member functions of Cave
-      and HW_game class.
-      But I think that it is the way to write a kind of big software, that we determine roughly
-      in the 1st conceptualization phase, then as we keep writing the code, we keep 
-      modifications to the functionalities and concepts on the fly.
-
-      I don't know if there is better processes to write a big software (I'm sure there is),
-      but at least this exercise is helpful to experience the whole processes, with 
-      relatively a large freedom of software design.
-     */
-
     
     return 0;
   }
