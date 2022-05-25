@@ -1,0 +1,2 @@
+Vector3<T> template is a version of vector<T> that holds only a pointer to its data representation. This is useful in saving memory when we define a large nested vector such as Vector3<Vector3<Vector3<int>>>, where most elements stays empty.
+If the vector holds many elements and yet most of the elements are empty, and if each of them holds its data representation, that is the loss of memory. Vector3 template solves that problem by only having the pointer to its data representation, and when the element is empty, it holds only nullptr, which saves memory.

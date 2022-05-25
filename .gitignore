@@ -1,3 +1,5 @@
+PAT
+# PAT stores Personal Access Token for the github
 *~
 # ignore emacs backup files, ending with '~'
 *.o
