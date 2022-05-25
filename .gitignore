@@ -1,2 +1,6 @@
 *~
 # ignore emacs backup files, ending with '~'
+*.o
+# ignore object files
+*.d
+# ignore dependency files
