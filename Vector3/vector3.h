@@ -46,7 +46,7 @@ template<typename T, typename A = allocator<T>>
       }
       // Referencing Vector(initializer_list<T> lst), for the case of alloc.construct() throws
       // an exception, I set the for-loop into try-catch block, because if an exception is
-      // thrown in a constructor, the corresponding destructor is not called even when the
+      // thrown in aconstructor, the corresponding destructor is not called even when the
       // object gets out of scope.
       
       // Notice: if we use allocator here, we need to use allocator in destroying and deallocating
@@ -106,6 +106,13 @@ template<typename T, typename A = allocator<T>>
       /* constructed elements are up to elem[sz-1] */
       for(int i=0; i<sz; ++i) alloc.destroy(&elem[i]);
       alloc.deallocate(elem, space);
+
+      // test if delete[] works
+      //delete[] elem;
+      // Again, as I noted in the above "Notice" comment, if I use user-defined complex types
+      // such as No_default class defined in main.cpp, using delete[] caused segmentation
+      // fault (, which is a little surprising, because before, it caused an error like "error
+      // for object 0x6000012504b8...")
     }
   };
 
@@ -140,7 +147,7 @@ class Vector3
      corresponding constructor */
   {}
 
-  // copy constructor
+    // copy constructor
   Vector3(const Vector3& arg)
   : vec_data{new vector_data<T>(*arg.vec_data)}
   {}
@@ -173,8 +180,21 @@ class Vector3
        called */
   }
 
-    int size() const {return vec_data->sz;}
-    int capacity() const {return vec_data->space;}
+    int size() const {
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // So we need additional check
+      if(vec_data == nullptr) return 0;
+      
+      return vec_data->sz;}
+    
+    int capacity() const {
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // So we need additional check
+      if(vec_data == nullptr) return 0;
+      
+      return vec_data->space;}
 
   /* version of using unique_ptr<T> */
   void reserve(int);
@@ -192,11 +212,21 @@ class Vector3
 
     // range-checking access at() (p693-694)  
     T& at(int n){
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // So we need additional check
+      if(vec_data == nullptr) throw runtime_error("This vector is empty");
+      
       if(n<0 || this->vec_data->sz<=n) throw out_of_range();
       // 
       return this->vec_data->elem[n];
     }
     const T& at(int n) const {
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // So we need additional check
+      if(vec_data == nullptr) throw runtime_error("This vector is empty");
+      
       if(n<0 || this->vec_data->sz<=n) throw out_of_range();
       return this->vec_data->elem[n];    
     }
@@ -218,5 +248,11 @@ class Vector3
 // by explicitly specifying actual types in vector3.cpp, like
 // template class Vector3<int>;
 // See https://stackoverflow.com/questions/495021/
+// and https://isocpp.org/wiki/faq/templates#templates-defn-vs-decl
+
+// If in different compilation units, a template is instantiated for the same type in each
+// cimpilation unit, it's possible that in linkage stage, the linker emits linker error, or
+// it's also possible that the linker drops one of the definitions, and links safely. That is
+// dependent on the linker setting.
 
 #endif // VECTOR3_GUARD

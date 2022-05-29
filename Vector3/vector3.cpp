@@ -11,6 +11,12 @@ template<typename T>
 Vector3<T>& Vector3<T>::operator=(const Vector3& a){
   if(this == &a) return *this;  // self-assignment, no work needed
 
+  // It's possible that a user make an empty Vector3<T>, and try to call this function.
+  // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+  // So we first need to create the data
+  if(vec_data == nullptr) vec_data = new vector_data<T>; // empty vector_data
+
+  
   if(a.vec_data->sz<=this->vec_data->space){	// enough space, no need for new allocation
     for(int i=0; i<a.vec_data->sz; ++i)
       this->vec_data->elem[i] = a.vec_data->elem[i]; // copy elements
@@ -48,6 +54,12 @@ Vector3<T>& Vector3<T>::operator=(const Vector3& a){
 }
 
 // move assignment operator
+// I think move assignment is used when the right hand side of = is a function returning its
+// local variable vector<T>, which is about to be destroyed, and the left hand side was already
+// constructed. For example, assume fill(cin) returns its locally filled Vector3<T>, then, 
+// Vector3<int> vec_int(fill(cin)); // vec_int is now created, so move constructor is used
+// Vector3<int> vec_int2;
+// vec_int2 = fill(cin); // vec_int2 was already constructed, so move assignment is used
 template<typename T>
 Vector3<T>& Vector3<T>::operator=(Vector3&& a){
   // main.cpp's Vector's move assignment tries not to shrink the original space, so it does
@@ -55,6 +67,11 @@ Vector3<T>& Vector3<T>::operator=(Vector3&& a){
   // move assignment, I decided not to care shrinking the original allocated space, and decided
   // to directly use the a's allocated memory
 
+  // It's possible that a user make an empty Vector3<T>, and try to call this function.
+  // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+  // So we first need to create the data
+  if(vec_data == nullptr) vec_data = new vector_data<T>; // empty vector_data
+  
   // before moving a's memory, destroy and deallocate the originally allocated memory
   for(int i=0; i<this->vec_data->sz; ++i)
     this->vec_data->alloc.destroy(&this->vec_data->elem[i]);
@@ -70,6 +87,11 @@ Vector3<T>& Vector3<T>::operator=(Vector3&& a){
 // based on Vector<T,A>::reserve() in main.cpp
 template<typename T>
 void Vector3<T>::reserve(int newalloc){
+  // It's possible that a user make an empty Vector3<T>, and try to call this function.
+  // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+  // So we first need to create the data
+  if(vec_data == nullptr) vec_data = new vector_data<T>; // empty vector_data
+  
   if(newalloc <= this->vec_data->space)
     return;			// never decrease allocation
 
@@ -128,7 +150,12 @@ void Vector3<T>::reserve(int newalloc){
 // based on Vector<T,A>::reserve2() in main.cpp
 template<typename T>
 void Vector3<T>::reserve2(int newalloc){
-  if(newalloc <= this->space)
+  // It's possible that a user make an empty Vector3<T>, and try to call this function.
+  // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+  // So we first need to create the data
+  if(vec_data == nullptr) vec_data = new vector_data<T>; // empty vector_data
+  
+  if(newalloc <= this->vec_data->space)
     return;			// never decrease allocation
   
   vector_data<T> b;		// use default constructor prepared for this time
@@ -190,6 +217,11 @@ void Vector3<T>::resize(int newsize, T val){ // default value (p690)
 // based on main.cpp's Vector<T,A>::push_back()
 template<typename T>
 void Vector3<T>::push_back(const T& val){
+  // It's possible that a user make an empty Vector3<T>, and try to call this function.
+  // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+  // So we first need to create the data
+  if(vec_data == nullptr) vec_data = new vector_data<T>; // empty vector_data
+
   if(this->vec_data->space==0)
     reserve(8);
   else if(this->vec_data->sz==this->vec_data->space)
@@ -200,3 +232,4 @@ void Vector3<T>::push_back(const T& val){
   ++this->vec_data->sz;
   // sz points to 1 element beyond the last element
 }
+
