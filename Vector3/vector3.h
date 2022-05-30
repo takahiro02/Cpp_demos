@@ -123,6 +123,55 @@ class Vector3
   vector_data<T>* vec_data;	/* pointers of all types have 8 bytes in size  */
   
   public:
+    // from p730
+    // To be usable for STL algorithms, prepare STL names for this Vector3 class
+    using size_type = unsigned long;
+    using value_type = T;
+    using iterator = T*;
+    using const_iterator = const T*;
+    // using is a generalization of typedef
+    // They give aliases of the right hand sides.
+
+    // Also for STL algorithms, define these iterator-related member functions
+    iterator begin(){
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // For this case, just return nullptr
+      if(vec_data == nullptr) return nullptr;
+
+      // otherwise
+      return vec_data->elem;
+    }
+    const_iterator begin() const {
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // For this case, just return nullptr
+      if(vec_data == nullptr) return nullptr;
+
+      // otherwise
+      return vec_data->elem;
+    }
+    iterator end(){
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // For this case, just return nullptr
+      if(vec_data == nullptr) return nullptr;
+
+      // otherwise
+      return &(vec_data->elem[vec_data->sz]);
+      // The last element is elem[sz-1], and one element beyond the last element is elem[sz]
+    }
+    const_iterator end() const {
+      // It's possible that a user make an empty Vector3<T>, and try to call this function.
+      // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+      // For this case, just return nullptr
+      if(vec_data == nullptr) return nullptr;
+
+      // otherwise
+      return &(vec_data->elem[vec_data->sz]);
+      // The last element is elem[sz-1], and one element beyond the last element is elem[sz]
+    }
+    
   
   Vector3()
     // : sz{0}, elem{nullptr}, space{0}
@@ -180,7 +229,7 @@ class Vector3
        called */
   }
 
-    int size() const {
+    size_type size() const {
       // It's possible that a user make an empty Vector3<T>, and try to call this function.
       // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
       // So we need additional check
@@ -188,7 +237,7 @@ class Vector3
       
       return vec_data->sz;}
     
-    int capacity() const {
+    size_type capacity() const {
       // It's possible that a user make an empty Vector3<T>, and try to call this function.
       // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
       // So we need additional check
@@ -206,6 +255,9 @@ class Vector3
   void resize(int newsize, T val = T());
   
   void push_back(const T& d);
+
+    // TRY THIS p728
+    void push_front(const T& d);
 
     T& operator[](int n){return this->vec_data->elem[n];}
     T operator[](int n) const {return this->vec_data->elem[n];}

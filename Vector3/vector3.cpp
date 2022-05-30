@@ -233,3 +233,32 @@ void Vector3<T>::push_back(const T& val){
   // sz points to 1 element beyond the last element
 }
 
+// TRY THIS p728
+template<typename T>
+void Vector3<T>::push_front(const T& val){
+  // It's possible that a user make an empty Vector3<T>, and try to call this function.
+  // In that case, vec_data-> causes segmentation fault, since vec_data is still nullptr.
+  // So we first need to create the data
+  if(vec_data == nullptr) vec_data = new vector_data<T>; // empty vector_data
+  
+  if(this->vec_data->space==0)
+    reserve(8);
+  else if(this->vec_data->sz==this->vec_data->space)
+    reserve(2*this->vec_data->space);
+  // by the above operations, enough elements are reserved, just the same way as push_back()
+
+  // Shift the elements forward by 1 element
+  // Move from the end, since if we move them from the front, we overwrite the existing elements
+  // Only the last element is newly constructed, so use alloc.construct() only for the last elem
+  vec_data->alloc.construct(&vec_data->elem[vec_data->sz], vec_data->elem[vec_data->sz - 1]);
+  ++vec_data->sz;
+  // For the rest of the elements, the destination element place was already constructed in
+  // reserve(), so just shift them from the end 
+  for(int i=vec_data->sz-2; i>0; --i){
+    // vec_data->sz-2 : index of the 2nd last element
+    vec_data->elem[i] = vec_data->elem[i-1];
+  }
+  
+  // At last, push the given argument to the front
+  vec_data->elem[0] = val;
+}
