@@ -6,3 +6,5 @@ PAT
 # ignore object files
 *.d
 # ignore dependency files
+main
+# ignore main binary file
