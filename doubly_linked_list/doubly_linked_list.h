@@ -1,4 +1,7 @@
 
+#ifndef DOUBLY_LINKED_LIST_GUARD
+#define DOUBLY_LINKED_LIST_GUARD 1
+
 #include "std_lib_facilities.h"
 
 template<typename Elem>
@@ -8,7 +11,7 @@ struct Link {
   Elem val;
   
   Link(const Elem& elem) : val{elem}, prev{nullptr}, succ{nullptr} {}
-  // copy constructor of type Elem
+  // copy constructor of type Elem is assumed to exist
   Link() : val{}, prev{nullptr}, succ{nullptr} {}
 };
 
@@ -268,7 +271,8 @@ typename List<Elem>::iterator List<Elem>::erase(iterator p){
     // only 1 element exists. This case needs to be separated from the case of
     // p == begin() && sz > 1 in ex 13, because in this case, p.curr->succ is 0, instead of
     // end()'s Link<> element
-    first = p.curr->succ;
+    first = p.curr->succ;	// == 0 (end())
+    last = p.curr->succ;
   }
   else if(p == begin() && sz > 1){
     first = p.curr->succ;
@@ -354,6 +358,7 @@ void List<Elem>::push_front(const Elem& v){
     first->prev = nullptr;
     //first->succ = e;
     // <- in ex 13, I represent end() with just 0, so there is no end() element of Link<>
+    first->succ = 0;		// 0 == end()
   }
   else{
     Link<Elem>* p{new Link<Elem>(v)};
@@ -477,8 +482,9 @@ public:
   // This works because iterator-> is interpreted as (iterator.operator->())-> (notice another
   // arrow operator is added at the back). See my comment in operator-> in ex 10 of ch19
   
-  bool operator==(const iterator& b) const {return curr==b.curr && lst->first==b.lst->first;}
-  // after introducing a reference to a List<> lst, check if the first element matches as well
+  bool operator==(const iterator& b) const {return curr==b.curr;}
+  // I don't have to compare lst with b.lst, because if curr==b.curr, both iterators point to
+  // the same element, which must be in the same List<>
   bool operator!=(const iterator& b) const {return !(*this==b);}
 };
 
@@ -522,6 +528,9 @@ public:
   const Link<Elem>* operator->() const {return curr;}
 
   bool operator==(const const_iterator& b) const
-  {return curr==b.curr && lst->first==b.lst->first;}
+  {return curr==b.curr;}
   bool operator!=(const const_iterator& b) const {return !(*this==b);}
 };
+
+
+#endif // DOUBLY_LINKED_LIST_GUARD
