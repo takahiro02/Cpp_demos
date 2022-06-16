@@ -228,6 +228,8 @@ typename List<Elem>::iterator List<Elem>::insert(iterator p, const Elem& v){
     new_l->prev = nullptr;
     //p.curr->prev = new_l; // in this case, p is end()
     // <- in ex 13, I represent end() with just 0, so there is no end() element of Link<>
+
+    ++sz;
   }  
   // different procedures depending on whether p is the front element or not
   else if(p == begin()){
@@ -239,6 +241,8 @@ typename List<Elem>::iterator List<Elem>::insert(iterator p, const Elem& v){
     new_l->succ = p.curr;
     new_l->prev = nullptr;
     p.curr->prev = new_l;
+
+    ++sz;
   }
   else if(p != end()){		// the case of p.curr==last is included in this case
     new_l = new Link<Elem>(v);
@@ -249,14 +253,17 @@ typename List<Elem>::iterator List<Elem>::insert(iterator p, const Elem& v){
     // be careful, the order of these operations matter. If p.curr->prev = new_l; comes before
     // p.curr->prev->succ = new_l;, p.curr->prev's value is changed, so the latter operation
     // doesn't work as expected.
+
+    ++sz;
   }
   else if(p == end()){		// when p is end(), this is the same as push_back()
     push_back(v);
+    // in this case, since ++sz was already done by inside of push_back(), I don't do it.
+    // Otherwise, bug happens (actually happened)
   }
   else{
     throw runtime_error("Error in list<Elemt>::insert(). The given iterator doesn't point to any of the elements");
   }
-  ++sz;
   return iterator(this, new_l);
 }
 
